@@ -273,6 +273,8 @@ body {
 .leaflet-container {
   font-family: inherit;
   background-color: #f1f4f8;
+  isolation: isolate;
+  z-index: 0;
 }
 
 .leaflet-control-zoom {

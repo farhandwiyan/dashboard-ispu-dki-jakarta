@@ -1,1 +1,4 @@
-export { SpatialMap as SpatialMapPanel } from '../charts/SpatialMap';
+export {
+  SpatialMap as SpatialMapPanel,
+  EnlargedSpatialMap
+} from '../charts/SpatialMap';
