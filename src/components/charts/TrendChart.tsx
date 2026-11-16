@@ -311,16 +311,20 @@ export const TrendChart: React.FC = () => {
           </div>
 
           {/* Bottom Footnote Summary */}
-          <div className="mt-3 pt-2 border-t border-[#F0FAFB] flex flex-col sm:flex-row items-center justify-between text-xs text-[#64748B] gap-1">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]" />
-              <strong>Rata-Rata Tertinggi:</strong> {highestMonth?.label} (
-              {highestMonth?.avgIspu.toFixed(1)} ISPU) & Agu 2024 (89.7 ISPU)
+          <div className="mt-3 pt-2 border-t border-[#F0FAFB] flex items-center justify-between text-[11px] text-[#64748B] gap-2 whitespace-nowrap">
+            <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] flex-shrink-0" />
+              <span>
+                <strong className="text-[#0D3843]">Rata-Rata Tertinggi:</strong>{' '}
+                {highestMonth?.label} ({highestMonth?.avgIspu.toFixed(1)} ISPU)
+              </span>
             </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#10B981]" />
-              <strong>Rata-Rata Terendah:</strong> {lowestMonth?.label} (
-              {lowestMonth?.avgIspu.toFixed(1)} ISPU • Kategori Baik)
+            <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] flex-shrink-0" />
+              <span>
+                <strong className="text-[#0D3843]">Rata-Rata Terendah:</strong>{' '}
+                {lowestMonth?.label} ({lowestMonth?.avgIspu.toFixed(1)} ISPU • Kategori Baik)
+              </span>
             </span>
           </div>
         </div>

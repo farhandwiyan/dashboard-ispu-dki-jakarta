@@ -56,7 +56,7 @@ export const ComparisonStack: React.FC = () => {
 
             return (
               <div key={stat.year}>
-                <div className="flex flex-wrap items-center justify-between text-xs font-bold mb-1.5 gap-1">
+                <div className="flex flex-col items-start text-xs font-bold mb-1.5 gap-0.5">
                   <span className="text-[#0D3843]">{label}</span>
                   <span
                     className={`text-[11px] ${
