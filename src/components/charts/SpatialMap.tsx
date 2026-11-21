@@ -100,14 +100,10 @@ export const SpatialMap: React.FC<SpatialMapProps> = ({
 
           layer.bindTooltip(
             `<div style="font-family: Poppins, sans-serif; font-size: 11px;">
-              <strong style="color: #0D3843; font-size: 12px;">Kecamatan ${kecName}</strong><br/>
-              <span style="color:#64778A;">${cityName} • ${st.name}</span><br/>
-              <span style="font-weight:700; color:${choro.fillColor};">Mean ISPU: ${st.avgIspu.toFixed(
+              <strong style="color: #0D3843; font-size: 12px;">${kecName}</strong><br/>
+              <span style="font-weight:700; color:${choro.fillColor};">${st.id}: ${st.avgIspu.toFixed(
                 1
-              )} (Max: ${st.maxIspu})</span><br/>
-              <span style="font-size:10px; color:#475569;">Kepekatan: ${
-                choro.intensityLabel
-              }</span>
+              )}</span>
             </div>`,
             { sticky: true }
           );
@@ -235,60 +231,11 @@ export const SpatialMap: React.FC<SpatialMapProps> = ({
     });
   }, [searchQuery]);
 
-  const sortedStations = [...STATIONS].sort((a, b) => a.avgIspu - b.avgIspu);
-
   return (
-    <div className="bento-card p-5 flex flex-col justify-between h-full bg-white rounded-[20px] shadow-sm border border-[#CDEAEF]">
-      {/* Header Bar */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-[#F0F9FF] text-[#0284C7] flex items-center justify-center flex-shrink-0">
-            <MapPin className="w-4 h-4 stroke-[2.4]" />
-          </div>
-          <div>
-            <h3 className="font-bold text-base text-[#0D3843]">
-              Peta Koroplet Beban ISPU 5 Wilayah DKI Jakarta
-            </h3>
-            <p className="text-xs text-[#4E7682] mt-0.5">
-              Join `location` & `mean(max)` CSV pada 42 Poligon Kecamatan (Kepekatan Warna)
-            </p>
-          </div>
-        </div>
-
-        <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#F0F9FF] text-[#0284C7] border border-[#BAE6FD]">
-          CHOROPLETH GIS
-        </span>
-      </div>
-
+    <div className="bento-card p-5 flex flex-col justify-center h-full bg-white rounded-[20px] shadow-sm border border-[#CDEAEF]">
       {/* Map Container */}
-      <div className="relative isolate z-0 w-full h-[220px] sm:h-[245px] rounded-2xl overflow-hidden border border-[#D5F0F5] bg-[#F1F4F8]">
-        <div ref={mapContainerRef} className="w-full h-full" />
-      </div>
-
-      {/* Legenda Kepekatan Nilai Max (Rendah -> Tinggi) */}
-      <div className="mt-3 pt-2 border-t border-[#F0FAFB] flex flex-wrap items-center justify-between text-xs text-[#64748B] gap-2">
-        <div className="flex items-center gap-2.5 text-[11px] font-semibold flex-wrap">
-          <span className="text-[#88A2AA] font-bold">Kepekatan `max`:</span>
-          {sortedStations.map((st) => {
-            const choro = getChoroplethColor(st.avgIspu);
-            return (
-              <button
-                key={st.id}
-                type="button"
-                onClick={() => onSelectStation && onSelectStation(st)}
-                className="flex items-center gap-1 hover:text-[#0D3843] transition-colors cursor-pointer"
-              >
-                <span
-                  className="w-2.5 h-2.5 rounded-xs border border-white shadow-2xs"
-                  style={{ backgroundColor: choro.fillColor }}
-                />
-                <span>
-                  {st.id} ({st.avgIspu.toFixed(1)})
-                </span>
-              </button>
-            );
-          })}
-        </div>
+      <div className="relative isolate z-0 w-full h-full min-h-[260px] sm:min-h-[290px] rounded-2xl overflow-hidden border border-[#D5F0F5] bg-[#F1F4F8]">
+        <div ref={mapContainerRef} className="w-full h-full min-h-[260px] sm:min-h-[290px]" />
       </div>
     </div>
   );
@@ -379,14 +326,10 @@ export const EnlargedSpatialMap: React.FC<EnlargedSpatialMapProps> = ({
 
           layer.bindTooltip(
             `<div style="font-family: Poppins, sans-serif; font-size: 11px;">
-              <strong style="color: #0D3843; font-size: 12px;">Kecamatan ${kecName}</strong><br/>
-              <span style="color:#64778A;">${cityName} • ${st.name}</span><br/>
-              <span style="font-weight:700; color:${choro.fillColor};">Mean ISPU: ${st.avgIspu.toFixed(
+              <strong style="color: #0D3843; font-size: 12px;">${kecName}</strong><br/>
+              <span style="font-weight:700; color:${choro.fillColor};">${st.id}: ${st.avgIspu.toFixed(
                 1
-              )} (Max: ${st.maxIspu})</span><br/>
-              <span style="font-size:10px; color:#475569;">Kepekatan: ${
-                choro.intensityLabel
-              }</span>
+              )}</span>
             </div>`,
             { sticky: true }
           );
@@ -607,26 +550,16 @@ export const EnlargedSpatialMap: React.FC<EnlargedSpatialMapProps> = ({
   return (
     <div className="bg-white rounded-[28px] p-5 sm:p-6 shadow-2xl border border-[#CDEAEF] flex flex-col justify-between h-full">
       {/* Header */}
-      <div className="flex items-start sm:items-center justify-between gap-3 mb-3">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-[#F0F9FF] text-[#0284C7] flex items-center justify-center flex-shrink-0">
-            <MapPin className="w-5 h-5 stroke-[2.4]" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-bold text-base text-[#0D3843]">
-                Peta Fokus Wilayah: {selectedStation.city}
-              </h3>
-              {selectedKecamatan && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
-                  Kec. {selectedKecamatan}
-                </span>
-              )}
-            </div>
-            <p className="text-xs text-[#4E7682] mt-0.5">
-              Klik kecamatan atau pin SPKU lain di peta untuk memperbesar & mengganti rincian di kiri
-            </p>
-          </div>
+      <div className="flex items-center justify-between gap-3 mb-3">
+        <div className="flex items-center gap-2 flex-wrap">
+          <h3 className="font-bold text-base text-[#0D3843]">
+            {selectedStation.id}
+          </h3>
+          {selectedKecamatan && (
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A]">
+              {selectedKecamatan}
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -634,10 +567,8 @@ export const EnlargedSpatialMap: React.FC<EnlargedSpatialMapProps> = ({
             type="button"
             onClick={handleResetFullJakarta}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold bg-[#F0F9FF] text-[#0284C7] border border-[#BAE6FD] hover:bg-[#E0F2FE] transition-colors cursor-pointer"
-            title="Lihat Seluruh Wilayah DKI Jakarta"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Seluruh DKI</span>
           </button>
           <button
             type="button"
@@ -658,7 +589,6 @@ export const EnlargedSpatialMap: React.FC<EnlargedSpatialMapProps> = ({
       {/* Quick Switch Station Pills */}
       <div className="mt-3.5 pt-2.5 border-t border-[#F0FAFB] flex flex-wrap items-center justify-between gap-2 text-xs">
         <div className="flex items-center gap-1.5 text-[11px] font-semibold flex-wrap">
-          <span className="text-[#88A2AA] font-bold mr-1">Pilih Wilayah SPKU:</span>
           {sortedStations.map((st) => {
             const choro = getChoroplethColor(st.avgIspu);
             const isActive = st.id === selectedStation.id;

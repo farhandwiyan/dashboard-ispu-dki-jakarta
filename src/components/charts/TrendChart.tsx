@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Activity, AlertTriangle, Info } from 'lucide-react';
 import {
   MONTHLY_TRENDS,
   DAILY_PEAK_SERIES,
@@ -17,11 +16,11 @@ export const TrendChart: React.FC = () => {
 
   // SVG Geometry (shared dimensions)
   const svgWidth = 520;
-  const svgHeight = 215;
+  const svgHeight = 235;
   const padLeft = 36;
   const padRight = 16;
-  const padTop = 26;
-  const padBottom = 32;
+  const padTop = 20;
+  const padBottom = 30;
 
   const chartW = svgWidth - padLeft - padRight;
   const chartH = svgHeight - padTop - padBottom;
@@ -65,7 +64,6 @@ export const TrendChart: React.FC = () => {
       } L ${monthPoints[0].x} ${padTop + chartH} Z`
     : '';
 
-  // Find actual peak & lowest monthly averages from CSV
   const highestMonth = [...MONTHLY_TRENDS].sort((a, b) => b.avgIspu - a.avgIspu)[0];
   const lowestMonth = [...MONTHLY_TRENDS].sort((a, b) => a.avgIspu - b.avgIspu)[0];
 
@@ -92,7 +90,6 @@ export const TrendChart: React.FC = () => {
       } Z`
     : '';
 
-  // Map top anomaly dates to their index in DAILY_PEAK_SERIES for marker placement
   const topMarkers = TOP_ANOMALY_RECORDS.slice(0, 6).map((rec) => {
     const idx = DAILY_PEAK_SERIES.findIndex((d) => d.dateStr === rec.dateStr);
     return {
@@ -104,65 +101,42 @@ export const TrendChart: React.FC = () => {
   });
 
   return (
-    <div className="bento-card p-5 flex flex-col justify-between h-full bg-white rounded-[20px] shadow-sm border border-[#CDEAEF]">
-      {/* Header Bar with Toggle Switcher */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-[#F0F9FF] text-[#0284C7] flex items-center justify-center flex-shrink-0">
-              <Activity className="w-4 h-4 stroke-[2.4]" />
-            </div>
-            <div>
-              <h3 className="font-bold text-base text-[#0D3843]">
-                {activeTab === 'spline'
-                  ? 'Tren Siklus Rata-Rata ISPU Bulanan'
-                  : 'Puncak Absolut Harian (Anomali)'}
-              </h3>
-              <p className="text-xs text-[#4E7682] mt-0.5">
-                {activeTab === 'spline'
-                  ? `23 Periode Bulanan (${MONTHLY_TRENDS[0]?.label} – ${
-                      MONTHLY_TRENDS[MONTHLY_TRENDS.length - 1]?.label
-                    })`
-                  : `${DAILY_PEAK_SERIES.length} Hari Pengamatan • Nilai Mentah Tertinggi (max)`}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Tab Toggle Pill */}
-        <div className="inline-flex bg-[#F0FAFB] p-1 rounded-full border border-[#BCE8ED] self-start sm:self-auto">
+    <div className="bento-card p-5 flex flex-col justify-center h-full bg-white rounded-[20px] shadow-sm border border-[#CDEAEF] relative">
+      {/* Minimal Tab Switcher (1 / 2) without descriptive labels */}
+      <div className="flex justify-end mb-2">
+        <div className="inline-flex bg-[#F0FAFB] p-0.5 rounded-full border border-[#BCE8ED]">
           <button
             type="button"
             onClick={() => setActiveTab('spline')}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+            className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-all cursor-pointer ${
               activeTab === 'spline'
                 ? 'bg-[#0284C7] text-white shadow-xs'
                 : 'text-[#4E7682] hover:text-[#0D3843]'
             }`}
           >
-            Rata-Rata Bulanan
+            1
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('anomaly')}
-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+            className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold transition-all cursor-pointer ${
               activeTab === 'anomaly'
                 ? 'bg-[#0284C7] text-white shadow-xs'
                 : 'text-[#4E7682] hover:text-[#0D3843]'
             }`}
           >
-            Puncak Absolut
+            2
           </button>
         </div>
       </div>
 
-      {/* PILIHAN A: Interactive Spline Line Chart (Rata-Rata Bulanan) */}
+      {/* PILIHAN A: Interactive Spline Line Chart */}
       {activeTab === 'spline' && (
-        <div className="flex-1 flex flex-col justify-between">
+        <div className="flex-1 flex flex-col justify-center">
           <div className="relative w-full overflow-hidden bg-[#F8FDFF] rounded-2xl p-2 border border-[#D5F0F5]">
             <svg
               viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-              className="w-full h-auto max-h-[225px]"
+              className="w-full h-auto max-h-[265px]"
             >
               <defs>
                 <linearGradient id="bentoSplineGrad" x1="0" y1="0" x2="0" y2="1">
@@ -186,7 +160,7 @@ export const TrendChart: React.FC = () => {
                 </text>
               ))}
 
-              {/* Threshold 50: Batas Baik (Hijau) */}
+              {/* Threshold 50 */}
               <line
                 x1={padLeft}
                 y1={yMean50}
@@ -196,18 +170,8 @@ export const TrendChart: React.FC = () => {
                 strokeWidth="1.2"
                 strokeDasharray="4 4"
               />
-              <text
-                x={svgWidth - padRight}
-                y={yMean50 - 4}
-                textAnchor="end"
-                fontSize="8.5"
-                fontWeight="700"
-                fill="#10B981"
-              >
-                Batas Baik (50)
-              </text>
 
-              {/* Threshold 100: Batas Sedang (Biru -> Tidak Sehat) */}
+              {/* Threshold 100 */}
               <line
                 x1={padLeft}
                 y1={yMean100}
@@ -217,16 +181,6 @@ export const TrendChart: React.FC = () => {
                 strokeWidth="1.2"
                 strokeDasharray="4 4"
               />
-              <text
-                x={svgWidth - padRight}
-                y={yMean100 - 4}
-                textAnchor="end"
-                fontSize="8.5"
-                fontWeight="700"
-                fill="#D97706"
-              >
-                Batas Sedang (100)
-              </text>
 
               {/* Area Under Curve */}
               <path d={splineAreaPath} fill="url(#bentoSplineGrad)" />
@@ -293,50 +247,28 @@ export const TrendChart: React.FC = () => {
               })}
             </svg>
 
-            {/* Hover Tooltip Overlay */}
+            {/* Hover Tooltip Overlay (numbers only) */}
             {hoveredMonthIdx !== null && MONTHLY_TRENDS[hoveredMonthIdx] && (
-              <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-[#0D3843] text-white px-3 py-1.5 rounded-xl shadow-lg border border-white/20 text-xs flex items-center gap-2 pointer-events-none z-10">
+              <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-[#0D3843] text-white px-3 py-1 rounded-xl shadow-lg border border-white/20 text-xs flex items-center gap-2 pointer-events-none z-10">
                 <span className="font-bold">
                   {MONTHLY_TRENDS[hoveredMonthIdx].label}:
                 </span>
                 <span className="text-[#38BDF8] font-extrabold">
-                  Mean {MONTHLY_TRENDS[hoveredMonthIdx].avgIspu.toFixed(1)} ISPU
-                </span>
-                <span className="text-[#CBD5E1] text-[11px]">
-                  (Puncak: {MONTHLY_TRENDS[hoveredMonthIdx].maxIspu} di{' '}
-                  {MONTHLY_TRENDS[hoveredMonthIdx].peakStation.split(' ')[0]})
+                  {MONTHLY_TRENDS[hoveredMonthIdx].avgIspu.toFixed(1)}
                 </span>
               </div>
             )}
           </div>
-
-          {/* Bottom Footnote Summary */}
-          <div className="mt-3 pt-2 border-t border-[#F0FAFB] flex items-center justify-between text-[11px] text-[#64748B] gap-2 whitespace-nowrap">
-            <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B] flex-shrink-0" />
-              <span>
-                <strong className="text-[#0D3843]">Rata-Rata Tertinggi:</strong>{' '}
-                {highestMonth?.label} ({highestMonth?.avgIspu.toFixed(1)} ISPU)
-              </span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] flex-shrink-0" />
-              <span>
-                <strong className="text-[#0D3843]">Rata-Rata Terendah:</strong>{' '}
-                {lowestMonth?.label} ({lowestMonth?.avgIspu.toFixed(1)} ISPU • Kategori Baik)
-              </span>
-            </span>
-          </div>
         </div>
       )}
 
-      {/* PILIHAN B: Absolute Anomaly Line Chart (Puncak Absolut Harian) */}
+      {/* PILIHAN B: Absolute Anomaly Line Chart */}
       {activeTab === 'anomaly' && (
-        <div className="flex-1 flex flex-col justify-between">
+        <div className="flex-1 flex flex-col justify-center">
           <div className="relative w-full overflow-hidden bg-[#F8FDFF] rounded-2xl p-2 border border-[#D5F0F5]">
             <svg
               viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-              className="w-full h-auto max-h-[190px]"
+              className="w-full h-auto max-h-[265px]"
             >
               <defs>
                 <linearGradient id="anomalyAreaGrad" x1="0" y1="0" x2="0" y2="1">
@@ -361,7 +293,7 @@ export const TrendChart: React.FC = () => {
                 </text>
               ))}
 
-              {/* Threshold 100: Batas Tidak Sehat */}
+              {/* Threshold 100 */}
               <line
                 x1={padLeft}
                 y1={yDaily100}
@@ -371,18 +303,8 @@ export const TrendChart: React.FC = () => {
                 strokeWidth="1.1"
                 strokeDasharray="3 3"
               />
-              <text
-                x={svgWidth - padRight}
-                y={yDaily100 - 3}
-                textAnchor="end"
-                fontSize="8"
-                fontWeight="700"
-                fill="#D97706"
-              >
-                Tidak Sehat (100)
-              </text>
 
-              {/* Threshold 200: Batas Sangat Tidak Sehat */}
+              {/* Threshold 200 */}
               <line
                 x1={padLeft}
                 y1={yDaily200}
@@ -392,16 +314,6 @@ export const TrendChart: React.FC = () => {
                 strokeWidth="1.2"
                 strokeDasharray="4 3"
               />
-              <text
-                x={svgWidth - padRight}
-                y={yDaily200 + 10}
-                textAnchor="end"
-                fontSize="8"
-                fontWeight="700"
-                fill="#EF4444"
-              >
-                Sangat Tidak Sehat (200)
-              </text>
 
               {/* Daily Raw Max Area & Line */}
               <path d={dailyAreaPath} fill="url(#anomalyAreaGrad)" />
@@ -465,68 +377,6 @@ export const TrendChart: React.FC = () => {
                 );
               })}
             </svg>
-
-            {/* Active Anomaly Callout Bar */}
-            {selectedAnomaly && (
-              <div className="mt-1 px-3 py-1.5 rounded-xl bg-[#0D3843] text-white text-xs flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-3.5 h-3.5 text-[#F59E0B] flex-shrink-0" />
-                  <span className="font-bold">{selectedAnomaly.displayDate}</span>
-                  <span className="text-[#94A3B8]">•</span>
-                  <span className="text-[#38BDF8] font-semibold">
-                    {selectedAnomaly.station}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-extrabold text-[#FDE68A]">
-                    Max: {selectedAnomaly.maxIspu} ISPU ({selectedAnomaly.pollutant})
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/15 text-white">
-                    {selectedAnomaly.category}
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Interactive Top 4 Anomaly Chips below Line Chart */}
-          <div className="mt-2 grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-            {TOP_ANOMALY_RECORDS.slice(0, 4).map((rec) => {
-              const isSelected = selectedAnomaly?.dateStr === rec.dateStr;
-              return (
-                <button
-                  key={rec.dateStr}
-                  type="button"
-                  onClick={() => setSelectedAnomaly(rec)}
-                  className={`p-1.5 rounded-xl border text-left transition-all ${
-                    isSelected
-                      ? 'bg-[#FFFBEB] border-[#F59E0B] shadow-2xs'
-                      : 'bg-[#F8FDFF] border-[#D5F0F5] hover:border-[#0284C7]'
-                  }`}
-                >
-                  <div className="flex items-center justify-between text-[11px] font-extrabold text-[#0D3843]">
-                    <span>{rec.displayDate}</span>
-                    <span
-                      className={
-                        rec.maxIspu > 200 ? 'text-[#EF4444]' : 'text-[#D97706]'
-                      }
-                    >
-                      {rec.maxIspu}
-                    </span>
-                  </div>
-                  <div className="text-[10px] text-[#64748B] truncate">
-                    {rec.station} • {rec.pollutant}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="mt-2 pt-1.5 border-t border-[#F0FAFB] text-[11px] text-[#64748B] flex items-center gap-1.5">
-            <Info className="w-3.5 h-3.5 text-[#0284C7] flex-shrink-0" />
-            <span>
-              Rekor tertinggi CSV: <strong>14 Feb 2024 (202 ISPU - Sangat Tidak Sehat)</strong> di DKI3 Jagakarsa & <strong>29 Agu 2024 (187 ISPU)</strong> di DKI4.
-            </span>
           </div>
         </div>
       )}
